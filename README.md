@@ -1,0 +1,1 @@
+Chainer implementation of GENERALIZING ACROSS DOMAINS VIA CROSS-GRADIENT TRAINING[https://arxiv.org/abs/1804.10745]

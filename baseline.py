@@ -46,10 +46,13 @@ def main(args):
     elif args.dataset == 'digits':
         mnist_train, test = get_mnist(ndim=3)
         mnist_m = MNIST_MDataset()
-        svhn = SVHNDataset()
         usps = USPSDataset()
-        train_set = CrossDomainDigitDataset(datasets=[mnist_train, mnist_m, usps], return_domain=False)
-        test_set = svhn
+        # svhn = SVHNDataset()
+        # train_set = CrossDomainDigitDataset(datasets=[mnist_train, mnist_m, usps], return_domain=False)
+        # test_set = svhn
+        svhn = SVHNDataset(k=5)
+        train_set = CrossDomainDigitDataset(datasets=[mnist_train, mnist_m, usps, svhn], return_domain=False)
+        test_set = SVHNDataset(src='test')
 
     lenet = LeNetBase(out_channels=train_set.n_classes)
     lenet_cl = L.Classifier(lenet)
@@ -83,15 +86,15 @@ def main(args):
     # Run the training
     trainer.run()
 
-    target_rotate = [75]
-    notify(args.__repr__())
-    for r in target_rotate:
-        test_set = RotateMnistDataset(src='test', rotate=[r], return_domain=False)
-        test_iter = chainer.iterators.SerialIterator(test_set, args.batchsize, repeat=False, shuffle=False)
-        e = extensions.Evaluator(test_iter, lenet_cl, device=args.gpu)
-        res = e()
-        print(res)
-        notify('rotate:{}'.format(r), res.__repr__())
+    # target_rotate = [75]
+    # notify(args.__repr__())
+    # for r in target_rotate:
+    #     test_set = RotateMnistDataset(src='test', rotate=[r], return_domain=False)
+    #     test_iter = chainer.iterators.SerialIterator(test_set, args.batchsize, repeat=False, shuffle=False)
+    #     e = extensions.Evaluator(test_iter, lenet_cl, device=args.gpu)
+    #     res = e()
+    #     print(res)
+    #     notify('rotate:{}'.format(r), res.__repr__())
 
 
 if __name__ == '__main__':
@@ -100,6 +103,8 @@ if __name__ == '__main__':
     # dataset io
     p.add_argument('-o', '--output_path', metavar='PATH', type=str, default='test',
                    help='output_path (default: ./output)')
+    p.add_argument('-d', '--dataset', type=str, default='rot',
+                   help='rot or digits')
     # p.add_argument('-d', '--dataset', type=str, default='CS',
     #                help='MSRC or DSD or CS')
     # p.add_argument('-m', '--model', type=str, default='U',

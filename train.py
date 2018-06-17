@@ -43,10 +43,10 @@ def main(args):
     elif args.dataset == 'digits':
         mnist_train, test = get_mnist(ndim=3)
         mnist_m = MNIST_MDataset()
-        svhn = SVHNDataset()
         usps = USPSDataset()
-        train_set = CrossDomainDigitDataset(datasets=[mnist_train, mnist_m, usps])
-        test_set = svhn
+        svhn = SVHNDataset(k=5)
+        train_set = CrossDomainDigitDataset(datasets=[mnist_train, mnist_m, usps, svhn])
+        test_set = SVHNDataset(src='test')
 
     style = StyleNet(out_channels=train_set.n_domain)
     lenet = LeNet(out_channels=train_set.n_classes, style=style)
@@ -133,9 +133,9 @@ if __name__ == '__main__':
                    help='batch size (default: 128)')
     p.add_argument('-w', '--weight_decay', metavar='N', type=float, default=0.0001,
                    help='weight decay coefficient (default 0.00001)')
-    p.add_argument('--alpha', metavar='N', type=float, default=0.5,
+    p.add_argument('--alpha', metavar='N', type=float, default=0.7,
                    help='perturb term weight')
-    p.add_argument('--eps', metavar='N', type=float, default=0.5,
+    p.add_argument('--eps', metavar='N', type=float, default=1.5,
                    help='perturb norm')
     p.add_argument('-e', '--epoch', metavar='N', type=int, default=100,
                    help='number of epochs (default: 100)')

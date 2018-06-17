@@ -82,9 +82,10 @@ class SVHNDataset(dataset_mixin.DatasetMixin):
             self.x = np.array(self.x, dtype=np.float32)
 
     def __len__(self):
-        return len(self.x)
+        return 11000#len(self.x)
 
     def get_example(self, i):
+        i = i % len(self.x)
         return self.x[i], self.y[i]
 
 

@@ -36,8 +36,20 @@ def main(args):
     print('# epoch: {}'.format(args.epoch))
     print('')
 
-    train_set = RotateMnistDataset(src='train', rotate=[0, 15, 30, 45, 60], return_domain=False)
-    test_set = RotateMnistDataset(src='test', rotate=[0, 15, 30, 45, 60], return_domain=False)
+    # train_set = RotateMnistDataset(src='train', rotate=[0, 15, 30, 45, 60], return_domain=False)
+    # test_set = RotateMnistDataset(src='test', rotate=[0, 15, 30, 45, 60], return_domain=False)
+    # dataset:
+    if args.dataset == 'rot':
+        train_set = RotateMnistDataset(src='train', rotate=[0, 15, 30, 45, 60], return_domain=False)
+        test_set = RotateMnistDataset(src='test', rotate=[75], return_domain=False)
+
+    elif args.dataset == 'digits':
+        mnist_train, test = get_mnist(ndim=3)
+        mnist_m = MNIST_MDataset()
+        svhn = SVHNDataset()
+        usps = USPSDataset()
+        train_set = CrossDomainDigitDataset(datasets=[mnist_train, mnist_m, usps], return_domain=False)
+        test_set = svhn
 
     lenet = LeNetBase(out_channels=train_set.n_classes)
     lenet_cl = L.Classifier(lenet)

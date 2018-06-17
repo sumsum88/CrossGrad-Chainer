@@ -9,8 +9,9 @@ from scipy.misc import imrotate, imsave
 
 class RotateMnistDataset(dataset_mixin.DatasetMixin):
     img_size = (28, 28)
+    n_classes = 10
 
-    def __init__(self, src='train', rotate=(0, 15, 30, 45, 60, 75)):
+    def __init__(self, src='train', rotate=(0, 15, 30, 45, 60, 75), return_domain=True):
         if src == 'train':
             data, _ = get_mnist(ndim=3)
         elif src == 'test':
@@ -21,6 +22,8 @@ class RotateMnistDataset(dataset_mixin.DatasetMixin):
         self.data = data
         self.n_domain = len(rotate)
         self.rotate = rotate
+        self.return_domain = return_domain
+        self.src = src
 
     def __len__(self):
         return len(self.data)
@@ -31,7 +34,11 @@ class RotateMnistDataset(dataset_mixin.DatasetMixin):
         if r is None:
             r = np.random.randint(self.n_domain)
         x = imrotate(np.tile(x, (3, 1, 1)), self.rotate[r]).transpose(2, 0, 1)[[0]]
-        return x, y, r
+
+        if self.return_domain:
+            return x, y, r
+        else:
+            return x.astype(np.float32), y.astype(np.int8)
 
 
 if __name__ == '__main__':
